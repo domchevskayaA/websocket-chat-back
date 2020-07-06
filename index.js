@@ -14,7 +14,7 @@ const app = express();
 app.use((req, res, next) => {
   res.set({
     'Access-Control-Allow-Credentials': true,
-    'Access-Control-Allow-Origin': 'http://localhost:8080',
+    'Access-Control-Allow-Origin': process.env.CLIENT_URL,
     'Access-Control-Allow-Headers': 'content-type',
   });
   next();
@@ -28,13 +28,13 @@ const io = require('socket.io')(server);
 
 //use config module to get the privatekey, if no private key set, end the application
 if (!process.env.MY_PRIVATE_KEY) {
-  console.error("FATAL ERROR: myprivatekey is not defined.");
+  console.error("FATAL ERROR: secret key is not defined.");
   process.exit(1);
 }
 
 //connect to mongodb
 mongoose
-  .connect("mongodb://localhost:27017/chat", {useNewUrlParser: true})
+  .connect(process.env.DB_URL, {useNewUrlParser: true})
   .then(() => console.log("Connected to MongoDB..."))
   .catch(err => console.error("Could not connect to MongoDB..."));
 
