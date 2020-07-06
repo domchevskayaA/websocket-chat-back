@@ -20,8 +20,8 @@ app.use((req, res, next) => {
   next();
 });
 
-const server = app.listen(3000, () => {
-  console.log('server running on port 3000');
+const server = app.listen(process.env.PORT, () => {
+  console.log(`server running on port ${process.env.PORT}`);
 });
 
 const io = require('socket.io')(server);
@@ -34,7 +34,7 @@ if (!process.env.MY_PRIVATE_KEY) {
 
 //connect to mongodb
 mongoose
-  .connect(process.env.DB_URL, {useNewUrlParser: true})
+  .connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB..."))
   .catch(err => console.error("Could not connect to MongoDB..."));
 
