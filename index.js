@@ -1,4 +1,4 @@
-const config = require("config");
+require('dotenv').config();
 const mongoose = require("mongoose");
 
 const authRoute = require("./routes/auth.route");
@@ -27,7 +27,7 @@ const server = app.listen(3000, () => {
 const io = require('socket.io')(server);
 
 //use config module to get the privatekey, if no private key set, end the application
-if (!config.get("myprivatekey")) {
+if (!process.env.MY_PRIVATE_KEY) {
   console.error("FATAL ERROR: myprivatekey is not defined.");
   process.exit(1);
 }
