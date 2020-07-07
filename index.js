@@ -1,5 +1,6 @@
 require('dotenv').config();
 const mongoose = require("mongoose");
+mongoose.set('useCreateIndex', true);
 
 const authRoute = require("./routes/auth.route");
 const usersRoute = require("./routes/user.route");
