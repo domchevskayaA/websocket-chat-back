@@ -15,7 +15,7 @@ const app = express();
 app.use((req, res, next) => {
   res.set({
     'Access-Control-Allow-Credentials': true,
-    'Access-Control-Allow-Origin': 'https://websocket-chat-front.herokuapp.com/',
+    'Access-Control-Allow-Origin': 'https://websocket-chat-front.herokuapp.com',
     'Access-Control-Allow-Headers': "Origin, X-Requested-With, Content-Type, Accept",
     'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS'
   });
