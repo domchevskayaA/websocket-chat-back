@@ -15,16 +15,16 @@ const app = express();
 const cors = require('cors')
 app.use(cors({credentials: true, origin: process.env.CLIENT_URL}));
 
-// app.use((req, res, next) => {
-//   console.log(req.headers, 'gggggg');
-//   res.set({
-//     'Access-Control-Allow-Credentials': true,
-//     'Access-Control-Allow-Origin': process.env.CLIENT_URL,
-//     'Access-Control-Allow-Headers': "content-type",
-//     'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS'
-//   });
-//   next();
-// });
+app.use((req, res, next) => {
+  console.log(res.headers, 'gggggg');
+  // res.set({
+  //   'Access-Control-Allow-Credentials': true,
+  //   'Access-Control-Allow-Origin': process.env.CLIENT_URL,
+  //   'Access-Control-Allow-Headers': "content-type",
+  //   'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS'
+  // });
+  next();
+});
 
 const server = app.listen(process.env.PORT, () => {
   console.log(`server running on port ${process.env.PORT}`);
