@@ -11,6 +11,9 @@ const express = require("express");
 const cookieParser = require('cookie-parser');
 
 const app = express();
+var cors = require('cors');
+
+app.use(cors());
 
 app.use((req, res, next) => {
   console.log(process.env.CLIENT_URL, 'process.env.CLIENT_URL');
