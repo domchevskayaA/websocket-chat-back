@@ -13,6 +13,7 @@ const cookieParser = require('cookie-parser');
 const app = express();
 
 app.use((req, res, next) => {
+  console.log(process.env.CLIENT_URL, 'process.env.CLIENT_URL');
   res.set({
     'Access-Control-Allow-Credentials': true,
     'Access-Control-Allow-Origin': process.env.CLIENT_URL,
