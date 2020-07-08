@@ -12,16 +12,19 @@ const cookieParser = require('cookie-parser');
 
 const app = express();
 
-app.use((req, res, next) => {
-  console.log(req.headers, 'gggggg');
-  res.set({
-    'Access-Control-Allow-Credentials': true,
-    'Access-Control-Allow-Origin': process.env.CLIENT_URL,
-    'Access-Control-Allow-Headers': "content-type, origin",
-    'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS'
-  });
-  next();
-});
+const cors = require('cors')
+app.use(cors({credentials: true, origin: true}));
+
+// app.use((req, res, next) => {
+//   console.log(req.headers, 'gggggg');
+//   res.set({
+//     'Access-Control-Allow-Credentials': true,
+//     'Access-Control-Allow-Origin': process.env.CLIENT_URL,
+//     'Access-Control-Allow-Headers': "content-type, origin",
+//     'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS'
+//   });
+//   next();
+// });
 
 const server = app.listen(process.env.PORT, () => {
   console.log(`server running on port ${process.env.PORT}`);
