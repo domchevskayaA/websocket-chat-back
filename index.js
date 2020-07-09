@@ -14,26 +14,8 @@ const app = express();
 
 const cors = require('cors')
 app.use(cors({credentials: true, origin: process.env.CLIENT_URL}), (req, res, next) => {
-  console.log('options');
   next();
 });
-
-// app.use((req, res, next) => {
-//   console.log(res.headers, 'gggggg');
-//   res.set({
-//     'Access-Control-Allow-Credentials': true,
-//     'Access-Control-Allow-Origin': process.env.CLIENT_URL,
-//     'Access-Control-Allow-Headers': "content-type",
-//     'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,OPTIONS'
-//   });
-//   next();
-// });
-
-const server = app.listen(process.env.PORT, () => {
-  console.log(`server running on port ${process.env.PORT}`);
-});
-
-// const io = require('socket.io')(server);
 
 //use config module to get the privatekey, if no private key set, end the application
 if (!process.env.MY_PRIVATE_KEY) {
@@ -55,12 +37,18 @@ app.use("/api/users", usersRoute);
 app.use("/api/chat", chatRoute);
 app.use("/api/auth", authRoute);
 
-// io.on('connection', socket => {
-//   // console.log(socket.id, 'connection')
-// });
+const server = app.listen(process.env.PORT, () => {
+  console.log(`server running on port ${process.env.PORT}`);
+});
 
-// io.on('connection', socket => {
-//   socket.on('SEND_MESSAGE',data => {
-//     io.emit('MESSAGE', data)
-//   });
-// });
+const io = require('socket.io')(server);
+
+io.on('connection', socket => {
+  // console.log(socket.id, 'connection')
+});
+
+io.on('connection', socket => {
+  socket.on('SEND_MESSAGE',data => {
+    io.emit('MESSAGE', data)
+  });
+});
