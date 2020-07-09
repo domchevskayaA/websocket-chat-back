@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema({
   avatar_url: {
     type: String,
     required: false,
-    default: 'static/images/avatars/no_avatar.png',
+    default: null,
   },
   name: {
     type: String,

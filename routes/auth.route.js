@@ -36,7 +36,7 @@ router.post("/register", async (req, res) => {
   if (user) return res.status(400).send("User with this email is already registered.");
   const users = await User.find({});
   const userId = users.length;
-  const avatar_url = saveAvatar(req.body.avatar, `${req.body.name}${userId}`);
+  const avatar_url = await saveAvatar(req.body.avatar, `${req.body.name}${userId}`);
 
   user = new User({
     name: req.body.name,
