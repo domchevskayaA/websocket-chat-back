@@ -13,8 +13,9 @@ const cookieParser = require('cookie-parser');
 const app = express();
 
 const cors = require('cors')
-app.use(cors({credentials: true, origin: process.env.CLIENT_URL}), () => {
+app.use(cors({credentials: true, origin: process.env.CLIENT_URL}), (req, res, next) => {
   console.log('options');
+  next();
 });
 
 // app.use((req, res, next) => {
