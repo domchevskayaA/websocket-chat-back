@@ -33,7 +33,7 @@ const server = app.listen(process.env.PORT, () => {
   console.log(`server running on port ${process.env.PORT}`);
 });
 
-const io = require('socket.io')(server);
+// const io = require('socket.io')(server);
 
 //use config module to get the privatekey, if no private key set, end the application
 if (!process.env.MY_PRIVATE_KEY) {
@@ -55,12 +55,12 @@ app.use("/api/users", usersRoute);
 app.use("/api/chat", chatRoute);
 app.use("/api/auth", authRoute);
 
-io.on('connection', socket => {
-  // console.log(socket.id, 'connection')
-});
+// io.on('connection', socket => {
+//   // console.log(socket.id, 'connection')
+// });
 
-io.on('connection', socket => {
-  socket.on('SEND_MESSAGE',data => {
-    io.emit('MESSAGE', data)
-  });
-});
+// io.on('connection', socket => {
+//   socket.on('SEND_MESSAGE',data => {
+//     io.emit('MESSAGE', data)
+//   });
+// });
