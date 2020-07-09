@@ -13,7 +13,7 @@ const cookieParser = require('cookie-parser');
 const app = express();
 
 const cors = require('cors')
-app.options(cors({credentials: true, origin: process.env.CLIENT_URL}), () => {
+app.options('*', cors({credentials: true, origin: process.env.CLIENT_URL}), () => {
   console.log('options');
 });
 
