@@ -6,7 +6,8 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.get("/", async (req, res) => {
-  const users = await User.getAvailableUsers();
+  const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
+  const users = await User.getAvailableUsers(token);
   res.send(users);
 });
 

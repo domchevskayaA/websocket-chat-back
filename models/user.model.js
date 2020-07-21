@@ -47,8 +47,7 @@ UserSchema.methods.generateAuthToken = function() {
   return createUserToken(this);
 };
 
-UserSchema.statics.getAvailableUsers = function() {
-  const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
+UserSchema.statics.getAvailableUsers = function(token) {
   return new Promise((resolve, reject) => {
     this.find({token: {$ne: token}}, (err, docs) => {
       if(err) {
