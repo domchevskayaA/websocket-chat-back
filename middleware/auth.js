@@ -2,9 +2,9 @@ const { getUserByToken } = require('../modules/jwt');
 
 module.exports = (req, res, next) => {
   //get the token from cookies if present
-  const token = req.cookies.token;
+  const token = req.headers.authorization ? req.headers.authorization.split(' ')[1] : null;
   //if no token found, return response (without going to the next middleware)
-  if (!token) return res.status(401).send("Access denied. No token provided.");
+  if (!token) return res.status(401).send("Please, authorize first.");
 
   try {
     //if can verify the token, set req.user and pass to next middleware

@@ -17,8 +17,7 @@ router.post("/login", async (req, res) => {
     res.cookie(
       'token',
       user.token,
-      { httpOnly: true,
-        path: '/',
+      { path: '/',
       })
     .send(user);
   } else {
@@ -51,8 +50,7 @@ router.post("/register", async (req, res) => {
   res.cookie(
     'token',
     user.token,
-    { httpOnly: true,
-      path: '/',
+    { path: '/',
     })
   .send(user);
 });
