@@ -14,12 +14,12 @@ router.post("/login", async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) return res.status(401).send("Wrong user password!");
 
-    res.cookie(
-      'token',
-      user.token,
-      { path: '/',
-      })
-    .send(user);
+    // res.cookie(
+    //   'token',
+    //   user.token,
+    //   { path: '/',
+    //   })
+    res.send(user);
   } else {
     return res.status(401).send("User with this email doesn't exist. Please, register.");
   }  
@@ -47,16 +47,17 @@ router.post("/register", async (req, res) => {
   user.token = user.generateAuthToken();
   await user.save();  
 
-  res.cookie(
-    'token',
-    user.token,
-    { path: '/',
-    })
-  .send(user);
+  // res.cookie(
+  //   'token',
+  //   user.token,
+  //   { path: '/',
+  //   })
+  res.send(user);
 });
 
 router.post("/logout", async (req, res) => {
-  res.clearCookie("token").status(200).send("You are successfully logged out!");
+  // res.clearCookie("token").status(200).send("You are successfully logged out!");
+  res.status(200).send("You are successfully logged out!");
 });
 
 module.exports = router;
