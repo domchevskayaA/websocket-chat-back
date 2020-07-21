@@ -19,6 +19,7 @@ router.post("/login", async (req, res) => {
     //   user.token,
     //   { path: '/',
     //   })
+
     res.send(user);
   } else {
     return res.status(401).send("User with this email doesn't exist. Please, register.");
@@ -26,11 +27,9 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-  // validate the request body first
   const { error } = validateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-
-  //find an existing user
+  
   let user = await User.findOne({ email: req.body.email });
   if (user) return res.status(400).send("User with this email is already registered.");
   const users = await User.find({});
@@ -52,6 +51,7 @@ router.post("/register", async (req, res) => {
   //   user.token,
   //   { path: '/',
   //   })
+  
   res.send(user);
 });
 
