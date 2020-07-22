@@ -30,7 +30,6 @@ mongoose
   .catch(err => console.error("Could not connect to MongoDB..."));
 
 app.use(express.json({ limit: '300kb' }));
-app.use('/static', express.static('static'));
 app.use(cookieParser());
 
 app.use("/api/users", usersRoute);

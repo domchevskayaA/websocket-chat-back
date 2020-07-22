@@ -2,7 +2,6 @@
 .history
 node_modules
 /dist
-static
 
 # local env files
 .env

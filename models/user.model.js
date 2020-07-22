@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
   _id: {
     type: Number,
   },
-  avatar_url: {
+  avatar: {
     type: String,
     required: false,
     default: null,
@@ -44,7 +44,20 @@ const UserSchema = new mongoose.Schema({
 
 //custom method to generate authToken
 UserSchema.methods.generateAuthToken = function() {
-  return createUserToken(this);
+  const { name, email, _id } = this;
+  return createUserToken({ name, email, _id });
+};
+
+UserSchema.statics.getCurrentUser = function(token) {
+  return new Promise((resolve, reject) => {
+    this.findOne({token}, (err, user) => {
+      if(err) {
+        console.error(err)
+        return reject(err)
+      }
+      resolve(user)
+    })
+  })
 };
 
 UserSchema.statics.getAvailableUsers = function(token) {
@@ -76,10 +89,7 @@ const User = mongoose.model('User', UserSchema);
 //function to validate user
 const validate = (user) => {
   const schema = {
-    avatar: Joi.object().keys({
-      image: Joi.string().base64().required(),
-      extension: Joi.string().required(),
-    }),
+    avatar: Joi.string(),
     name: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(5).max(255).required().email(),
     password: Joi.string().min(3).max(255).required()

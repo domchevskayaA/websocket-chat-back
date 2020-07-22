@@ -1,5 +1,5 @@
 const {Chat} = require("../models/chat.model");
-const { getUserByToken } = require('../modules/jwt');
+const { getUserFromRequest } = require('../modules/jwt');
 const express = require("express");
 // const authMiddleware = require("../middleware/auth");
 
@@ -7,7 +7,7 @@ const router = express.Router();
 // router.use(authMiddleware);
 
 router.get("/receiver/:receiver_id", async (req, res) => {
-  const sender = getUserByToken(req.cookies.token);
+  const sender = getUserFromRequest(req);
   const receiver_id = parseInt(req.params.receiver_id);
   const filter = {user_ids: {$all: [receiver_id, sender._id]}};
 
@@ -31,7 +31,7 @@ router.get("/receiver/:receiver_id", async (req, res) => {
 
 router.post("/:id/messages", async (req, res) => {
   const filter = {_id: req.params.id};
-  const sender = getUserByToken(req.cookies.token);
+  const sender = getUserFromRequest(req);
 
   let chat = await Chat.findOne(filter, (err, chat) => {
     // console.log(err, chat);
