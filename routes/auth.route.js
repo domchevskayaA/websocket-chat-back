@@ -27,7 +27,6 @@ router.post("/register", async (req, res) => {
   const users = await User.find({});
   const userId = users.length;
   const { name, email, avatar } = req.body;
-  // const avatar_url = await saveAvatar(req.body.avatar, `${req.body.name}${userId}`);
 
   user = new User({
     name,

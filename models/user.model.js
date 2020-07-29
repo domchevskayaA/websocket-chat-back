@@ -38,6 +38,10 @@ const UserSchema = new mongoose.Schema({
   token: {
     type: String,
     required: true,
+  },
+  count: {
+    type: Number,
+    default: 0,
   }
 });
 
@@ -80,6 +84,30 @@ UserSchema.statics.deleteAllUsers = function() {
         return reject(err)
       }
       resolve(docs)
+    })
+  })
+};
+
+UserSchema.statics.increaseMessageCount = function(user_id) {
+  return new Promise((resolve, reject) => {
+    this.findByIdAndUpdate(user_id,  { $inc: { count : 1 } }, (err, doc) => {
+      if(err) {
+        console.error(err)
+        return reject(err)
+      }
+      resolve(doc)
+    })
+  })
+};
+
+UserSchema.statics.resetMessageCount = function(user_id) {
+  return new Promise((resolve, reject) => {
+    this.findByIdAndUpdate(user_id,  { count : 0 }, (err, doc) => {
+      if(err) {
+        console.error(err)
+        return reject(err)
+      }
+      resolve(doc)
     })
   })
 };
