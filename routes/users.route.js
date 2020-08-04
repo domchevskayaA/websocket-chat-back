@@ -6,17 +6,17 @@ const { getTokenFromRequest } = require('../modules/jwt');
 const router = express.Router();
 router.use(authMiddleware);
 
+router.get("/current", async (req, res) => {
+  const token = getTokenFromRequest(req);
+  const user = await User.getUserByToken(token);
+  if (!user) return res.status(404).send("User doesn't exist. Please, register.");
+  res.send(user);
+});
+
 router.get("/", async (req, res) => {
   const token = getTokenFromRequest(req);
   const users = await User.getAvailableUsers(token);
   res.send(users);
-});
-
-router.get("/current", async (req, res) => {
-  const token = getTokenFromRequest(req);
-  const user = await User.getCurrentUser(token);
-  if (!user) return res.status(404).send("User doesn't exist. Please, register.");
-  res.send(user);
 });
 
 router.delete("/", async(req, res) => {

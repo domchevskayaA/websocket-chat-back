@@ -3,14 +3,7 @@ const Joi = require('joi');
 const mongoose = require('mongoose');
 
 //simple schema
-const UserSchema = new mongoose.Schema({
-  __v: {
-    type: Number,
-    select: false,
-  },
-  _id: {
-    type: Number,
-  },
+const UserSchema = mongoose.Schema({
   avatar: {
     type: String,
     required: false,
@@ -39,10 +32,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  count: {
-    type: Number,
-    default: 0,
-  }
 });
 
 
@@ -52,7 +41,19 @@ UserSchema.methods.generateAuthToken = function() {
   return createUserToken({ name, email, _id });
 };
 
-UserSchema.statics.getCurrentUser = function(token) {
+UserSchema.statics.getUserById = function(id) {
+  return new Promise((resolve, reject) => {
+    this.findById(id, (err, user) => {
+      if(err) {
+        console.error(err)
+        return reject(err)
+      }
+      resolve(user)
+    })
+  })
+};
+
+UserSchema.statics.getUserByToken = function(token) {
   return new Promise((resolve, reject) => {
     this.findOne({token}, (err, user) => {
       if(err) {

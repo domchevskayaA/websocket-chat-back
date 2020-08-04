@@ -25,7 +25,6 @@ router.post("/register", async (req, res) => {
   let user = await User.findOne({ email: req.body.email });
   if (user) return res.status(400).send("User with this email is already registered.");
   const users = await User.find({});
-  const userId = users.length;
   const { name, email, avatar } = req.body;
 
   user = new User({
@@ -33,7 +32,6 @@ router.post("/register", async (req, res) => {
     email,
     avatar,
     password: await bcrypt.hash(req.body.password, 10),
-    _id: userId,
   });
   user.token = user.generateAuthToken();
   await user.save();  

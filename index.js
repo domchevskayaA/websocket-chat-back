@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 mongoose.set('useCreateIndex', true);
 
 const authRoute = require("./routes/auth.route");
-const usersRoute = require("./routes/user.route");
-const chatRoute = require("./routes/chat.route");
+const usersRoute = require("./routes/users.route");
+const chatsRoute = require("./routes/chats.route");
 
 const express = require("express");
 
@@ -33,7 +33,7 @@ app.use(express.json({ limit: '300kb' }));
 app.use(cookieParser());
 
 app.use("/api/users", usersRoute);
-app.use("/api/chat", chatRoute);
+app.use("/api/chats", chatsRoute);
 app.use("/api/auth", authRoute);
 
 const server = app.listen(process.env.PORT, () => {
