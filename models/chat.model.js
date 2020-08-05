@@ -6,7 +6,8 @@ mongoose.set('useFindAndModify', false);
 const ChatSchema = new mongoose.Schema({
   messages: {
     type: [Object],
-    required: true
+    required: true,
+    default: [],
   },
   users: {
     type: [{ type: mongoose.Types.ObjectId, ref: 'User' }]
@@ -34,36 +35,29 @@ ChatSchema.statics.getChatsByUserId = function(userId) {
     })
 };
 
-ChatSchema.statics.getChatByReceiverId = async function(receiverId) {
-  const sender = getUserFromRequest(req);
-  const filter = {users: {$all: [receiverId, sender._id]}};
-
-  let chat = await this.findOneAndUpdate(
-    filter, {
-      $set: { 'messages.$[].read': true }
-    }, (err, chat) => {
-    }).populate(getPopulateUsersObject(sender._id));
-
-  if (!chat) {
+ChatSchema.statics.createNewChat = async function(senderId, receiverId) {
     chat = new Chat({
-      users: [receiverId, sender._id],
-      messages: []
-    }).populate(populateUsersObject);
-    await chat.save();
-  };
+      users: [receiverId, senderId],
+    });
+  await chat.save();
 
-  return chat;
+  return chat.populate(getPopulateUsersObject(senderId));
 };
 
-ChatSchema.statics.postChatMessage = async function(filter, message) {
+ChatSchema.statics.getChatById = async function(chatId) {
+  const chat = this.findById(chatId);
+  return chat ? chat : es.status(404).send("Chat not found.");
+};
 
-  let chat = await this.findOne(filter);
+ChatSchema.statics.postChatMessage = async function(chatId, message) {
+  let chat = await this.findById(chatId);
 
   if (!chat) {
     return res.status(404).send("Chat not found.");
   } else {
-    chat = await this.findOneAndUpdate(
-      filter,
+    message._id = chat.messages.length;
+    chat = await this.findByIdAndUpdate(
+      chatId,
       {$push: {messages: message}},
       {new: true})
   };

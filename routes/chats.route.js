@@ -16,32 +16,39 @@ router.get("/", async (req, res) => {
   res.status(200).send(chats);
 });
 
-// returns chat with specific user or creates new one
-router.get("/receiver/:receiver_id", async (req, res) => {
-  const receiver_id = req.params.receiver_id;
+// creates new chat
+router.post("/", async (req, res) => {
+  const receiverId = req.body.receiver_id;
+  const sender = getUserFromRequest(req);
 
-  const chat = await Chat.getChatByReceiverId(receiver_id);
+  const chat = await Chat.createNewChat(sender._id, receiverId);
   res.status(200).send(chat);
 });
 
 // add new chat message
 router.post("/:id/messages", async (req, res) => {
-  const filter = {_id: req.params.id};
+  const chatId = req.params.id;
   const sender = getUserFromRequest(req);
-  const { receiver_id, text } = req.body;
+  const { text } = req.body;
   const date = new Date();
 
   const message = {
-    _id: chat.messages ? chat.messages.length : 0,
     sender,
-    receiver_id,
     text,
     date,
     read: false
   };
 
-  const chat = Chat.postChatMessage(filter, message);
+  const chat = await Chat.postChatMessage(chatId, message);
 
+  res.status(200).send(chat);
+});
+
+// returns chat with specific user or creates new one
+router.get("/:id", async (req, res) => {
+  const chatId = req.params.id;
+
+  const chat = await Chat.getChatById(chatId);
   res.status(200).send(chat);
 });
 
