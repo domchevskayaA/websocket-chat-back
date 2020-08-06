@@ -1,16 +1,24 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
 mongoose.set('useFindAndModify', false);
+const { User } = require("../models/user.model");
+const { MessageSchema } = require("../models/message.model");
 
 //simple schema
 const ChatSchema = new mongoose.Schema({
   messages: {
-    type: [Object],
-    required: true,
+    type: [MessageSchema],
     default: [],
   },
-  users: {
-    type: [{ type: mongoose.Types.ObjectId, ref: 'User' }]
+  users_ids: {
+    type: [mongoose.Types.ObjectId]
+  },
+  companion: {
+    type: {
+      email: String,
+      name: String,
+      avatar: String,
+    }
   },
   count: {
     type: Number,
@@ -28,41 +36,47 @@ const getPopulateUsersObject = (userId) => {
 };
 
 ChatSchema.statics.getChatsByUserId = function(userId) {
-    return this.find({ users: userId }).populate(getPopulateUsersObject(userId))
-    .catch(err => {
-      console.error(err);
-      throw err;
-    })
+  return this.find({ users_ids: userId }, 'companion count')
+  .catch(err => {
+    console.error(err);
+    throw err;
+  });
 };
 
-ChatSchema.statics.createNewChat = async function(senderId, receiverId) {
+ChatSchema.statics.createNewChat = async function(userId, companionId) {
+  const companion = await User.getUserById(companionId);
+  let chat = await this.findOne({users: {$all: [userId, companionId]}});
+  if (!chat) {
     chat = new Chat({
-      users: [receiverId, senderId],
+      users_ids: [userId, companionId],
+      companion,
     });
-  await chat.save();
-
-  return chat.populate(getPopulateUsersObject(senderId));
+    await chat.save();
+  } else {
+    console.log(err);
+    throw new Error('Chat already exists.');
+  }
+  return chat;
 };
 
 ChatSchema.statics.getChatById = async function(chatId) {
-  const chat = this.findById(chatId);
-  return chat ? chat : es.status(404).send("Chat not found.");
+  return this.findById(chatId)
+  .catch(err => {
+    console.error(err);
+    throw err;
+  })
 };
 
 ChatSchema.statics.postChatMessage = async function(chatId, message) {
-  let chat = await this.findById(chatId);
-
-  if (!chat) {
-    return res.status(404).send("Chat not found.");
-  } else {
-    message._id = chat.messages.length;
-    chat = await this.findByIdAndUpdate(
-      chatId,
-      {$push: {messages: message}},
-      {new: true})
-  };
-
-  return chat;
+  return this.findByIdAndUpdate(
+    chatId,
+    {$push: {messages: message}},
+    {new: true}
+  )
+  .catch(err => {
+    console.error(err);
+    throw err;
+  })
 };
 
 const Chat = mongoose.model('Chat', ChatSchema);

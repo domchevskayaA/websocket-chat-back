@@ -1,5 +1,6 @@
 const { Chat } = require("../models/chat.model");
 const { User } = require("../models/user.model");
+const { Message } = require("../models/message.model");
 const { getUserFromRequest, getTokenFromRequest } = require('../modules/jwt');
 const express = require("express");
 
@@ -18,38 +19,45 @@ router.get("/", async (req, res) => {
 
 // creates new chat
 router.post("/", async (req, res) => {
-  const receiverId = req.body.receiver_id;
-  const sender = getUserFromRequest(req);
-
-  const chat = await Chat.createNewChat(sender._id, receiverId);
-  res.status(200).send(chat);
+  try {
+    const companionId = req.body.companion_id;
+    const user = getUserFromRequest(req);
+    const chat = await Chat.createNewChat(user._id, companionId);
+    res.status(200).send(chat);
+  } catch(err) {
+    res.send(err);
+  }
 });
 
 // add new chat message
 router.post("/:id/messages", async (req, res) => {
-  const chatId = req.params.id;
-  const sender = getUserFromRequest(req);
-  const { text } = req.body;
-  const date = new Date();
-
-  const message = {
-    sender,
-    text,
-    date,
-    read: false
-  };
-
-  const chat = await Chat.postChatMessage(chatId, message);
-
-  res.status(200).send(chat);
+  try {
+    const chatId = req.params.id;
+    const sender = getUserFromRequest(req);
+    const { text } = req.body;
+  
+    const message = new Message({
+      sender,
+      text,
+    });
+  
+    const chat = await Chat.postChatMessage(chatId, message);  
+    res.status(200).send(chat);
+  } catch(err) {
+    res.status(404).send(err.message);
+  }
 });
 
-// returns chat with specific user or creates new one
+// returns chat by id
 router.get("/:id", async (req, res) => {
-  const chatId = req.params.id;
-
-  const chat = await Chat.getChatById(chatId);
-  res.status(200).send(chat);
+  try {
+    const chatId = req.params.id;
+  
+    const chat = await Chat.getChatById(chatId);
+    res.status(200).send(chat);
+  } catch(err) {
+    res.status(404).send(err.message);
+  }
 });
 
 module.exports = router;

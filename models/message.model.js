@@ -3,21 +3,25 @@ const mongoose = require('mongoose');
 
 //simple schema
 const MessageSchema = new mongoose.Schema({
-  chat_id: {
-    type: String,
-    required: true
-  },
-  message: {
+  text: {
     type: String,
     required: true
   },
   sender : {
-    type: Object,
-    required: true
+    type: {
+      email: String,
+      name: String,
+      avatar: String,
+    }
   },
   read: {
     type: Boolean,
-    required: true
+    required: true,
+    default: false,
+  },
+  date: {
+    type: Date,
+		default: Date.now,
   }
 });
 
@@ -26,14 +30,14 @@ const Message = mongoose.model('Message', MessageSchema);
 //function to validate user
 const validate = (item) => {
   const schema = {
-    chat_id: Joi.string().required(),
-    message: Joi.string().required(),
+    text: Joi.string().required(),
     sender: Joi.object().required(),
-    read: Joi.boolean().required(),
+    read: Joi.boolean(),
   };
 
   return Joi.validate(item, schema);
 };
 
+exports.MessageSchema = MessageSchema;
 exports.Message = Message;
 exports.validate = validate;

@@ -42,26 +42,18 @@ UserSchema.methods.generateAuthToken = function() {
 };
 
 UserSchema.statics.getUserById = function(id) {
-  return new Promise((resolve, reject) => {
-    this.findById(id, (err, user) => {
-      if(err) {
-        console.error(err)
-        return reject(err)
-      }
-      resolve(user)
-    })
+  return this.findById(id, 'name email avatar')
+  .catch(err => {
+    console.log(err);
+    throw err;
   })
 };
 
 UserSchema.statics.getUserByToken = function(token) {
-  return new Promise((resolve, reject) => {
-    this.findOne({token}, (err, user) => {
-      if(err) {
-        console.error(err)
-        return reject(err)
-      }
-      resolve(user)
-    })
+  return this.findOne({token})
+  .catch(err => {
+    console.log(err);
+    throw err;
   })
 };
 
@@ -127,5 +119,6 @@ const validate = (user) => {
   return Joi.validate(user, schema);
 };
 
+exports.UserSchema = UserSchema;
 exports.User = User;
 exports.validateUser = validate;
