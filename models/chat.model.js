@@ -10,19 +10,13 @@ const ChatSchema = new mongoose.Schema({
     type: [MessageSchema],
     default: [],
   },
-  users_ids: {
-    type: [mongoose.Types.ObjectId]
-  },
-  companion: {
-    type: {
-      email: String,
-      name: String,
-      avatar: String,
-    }
-  },
-  count: {
+  users: [{
+    type: mongoose.Types.ObjectId,
+    ref: 'User',
+  }],
+  unreadCount: {
     type: Number,
-    default: 1,
+    default: 0,
   }
 });
 
@@ -30,13 +24,13 @@ const ChatSchema = new mongoose.Schema({
 const getPopulateUsersObject = (userId) => {
   return {
     path: 'users',
-    select: 'name avatar',
-    match: { _id: {$ne: userId }},
+    select: 'name avatar email',
+    // match: { _id: {$ne: userId }},
   };
 };
 
-ChatSchema.statics.getChatsByUserId = function(userId) {
-  return this.find({ users_ids: userId }, 'companion count')
+ChatSchema.statics.getChatsByUserId = function(currentUserId) {
+  return this.find({ users: currentUserId }).populate(getPopulateUsersObject())
   .catch(err => {
     console.error(err);
     throw err;
@@ -44,23 +38,25 @@ ChatSchema.statics.getChatsByUserId = function(userId) {
 };
 
 ChatSchema.statics.createNewChat = async function(userId, companionId) {
-  const companion = await User.getUserById(companionId);
   let chat = await this.findOne({users: {$all: [userId, companionId]}});
   if (!chat) {
     chat = new Chat({
-      users_ids: [userId, companionId],
-      companion,
+      users: [userId, companionId],
     });
     await chat.save();
   } else {
     console.log(err);
     throw new Error('Chat already exists.');
   }
+  console.log(chat);
   return chat;
 };
 
 ChatSchema.statics.getChatById = async function(chatId) {
-  return this.findById(chatId)
+  return this.findByIdAndUpdate(
+      chatId,
+    { unreadCount : 0 },
+    {new: true})
   .catch(err => {
     console.error(err);
     throw err;
@@ -70,7 +66,10 @@ ChatSchema.statics.getChatById = async function(chatId) {
 ChatSchema.statics.postChatMessage = async function(chatId, message) {
   return this.findByIdAndUpdate(
     chatId,
-    {$push: {messages: message}},
+    {
+      $push: { messages: message },
+      $inc: { unreadCount : 1 }
+    },
     {new: true}
   )
   .catch(err => {

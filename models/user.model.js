@@ -83,7 +83,7 @@ UserSchema.statics.deleteAllUsers = function() {
 
 UserSchema.statics.increaseMessageCount = function(user_id) {
   return new Promise((resolve, reject) => {
-    this.findByIdAndUpdate(user_id,  { $inc: { count : 1 } }, (err, doc) => {
+    this.findByIdAndUpdate(user_id,  { $inc: { unreadCount : 1 } }, (err, doc) => {
       if(err) {
         console.error(err)
         return reject(err)
@@ -95,7 +95,7 @@ UserSchema.statics.increaseMessageCount = function(user_id) {
 
 UserSchema.statics.resetMessageCount = function(user_id) {
   return new Promise((resolve, reject) => {
-    this.findByIdAndUpdate(user_id,  { count : 0 }, (err, doc) => {
+    this.findByIdAndUpdate(user_id,  { unreadCount : 0 }, (err, doc) => {
       if(err) {
         console.error(err)
         return reject(err)

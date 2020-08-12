@@ -10,9 +10,9 @@ const router = express.Router();
 // returns all user chats
 router.get("/", async (req, res) => {
   const token = getTokenFromRequest(req);
-  const user = await User.getUserByToken(token);
+  const currentUser = await User.getUserByToken(token);
 
-  const chats = await Chat.getChatsByUserId(user._id);
+  const chats = await Chat.getChatsByUserId(currentUser._id);
 
   res.status(200).send(chats);
 });
@@ -21,8 +21,8 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   try {
     const companionId = req.body.companion_id;
-    const user = getUserFromRequest(req);
-    const chat = await Chat.createNewChat(user._id, companionId);
+    const currentUser = getUserFromRequest(req);
+    const chat = await Chat.createNewChat(currentUser._id, companionId);
     res.status(200).send(chat);
   } catch(err) {
     res.send(err);
