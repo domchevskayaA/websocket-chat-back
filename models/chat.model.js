@@ -66,10 +66,10 @@ ChatSchema.statics.getChatById = async function(chatId, currentUserId) {
   return this.findByIdAndUpdate(
     chatId,
     {
-      $set: { 'messages.$[sender].read': true }
+      $set: { 'messages.$[element].read': true }
     },
     {
-      arrayFilters: [ { 'sender._id': !currentUserId } ],
+      arrayFilters: [ { 'element.sender._id': { $ne: currentUserId } } ],
       new: true,
     }
   )
