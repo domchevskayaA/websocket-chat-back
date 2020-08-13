@@ -81,29 +81,29 @@ UserSchema.statics.deleteAllUsers = function() {
   })
 };
 
-UserSchema.statics.increaseMessageCount = function(user_id) {
-  return new Promise((resolve, reject) => {
-    this.findByIdAndUpdate(user_id,  { $inc: { unreadCount : 1 } }, (err, doc) => {
-      if(err) {
-        console.error(err)
-        return reject(err)
-      }
-      resolve(doc)
-    })
-  })
-};
+// UserSchema.statics.increaseMessageCount = function(user_id) {
+//   return new Promise((resolve, reject) => {
+//     this.findByIdAndUpdate(user_id,  { $inc: { unreadCount : 1 } }, (err, doc) => {
+//       if(err) {
+//         console.error(err)
+//         return reject(err)
+//       }
+//       resolve(doc)
+//     })
+//   })
+// };
 
-UserSchema.statics.resetMessageCount = function(user_id) {
-  return new Promise((resolve, reject) => {
-    this.findByIdAndUpdate(user_id,  { unreadCount : 0 }, (err, doc) => {
-      if(err) {
-        console.error(err)
-        return reject(err)
-      }
-      resolve(doc)
-    })
-  })
-};
+// UserSchema.statics.resetMessageCount = function(user_id) {
+//   return new Promise((resolve, reject) => {
+//     this.findByIdAndUpdate(user_id,  { unreadCount : 0 }, (err, doc) => {
+//       if(err) {
+//         console.error(err)
+//         return reject(err)
+//       }s
+//       resolve(doc)
+//     })
+//   })
+// };
 
 const User = mongoose.model('User', UserSchema);
 

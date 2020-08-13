@@ -52,8 +52,9 @@ router.post("/:id/messages", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const chatId = req.params.id;
+    const currentUser = getUserFromRequest(req);
   
-    const chat = await Chat.getChatById(chatId);
+    const chat = await Chat.getChatById(chatId, currentUser._id);
     res.status(200).send(chat);
   } catch(err) {
     res.status(404).send(err.message);

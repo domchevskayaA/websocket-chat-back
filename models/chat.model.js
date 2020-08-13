@@ -14,10 +14,21 @@ const ChatSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: 'User',
   }],
-  unreadCount: {
-    type: Number,
-    default: 0,
-  }
+});
+
+ChatSchema.set('toObject', { virtuals: true });
+ChatSchema.set('toJSON', { virtuals: true });
+
+ChatSchema.virtual('unreadCount').get(function() {
+  const unreadMessages = {};
+
+  this.users.map(user => unreadMessages[user._id] = 0);
+  if (!this.messages.length) return unreadMessages;
+
+  this.messages.map(m => {
+    !m.read ? unreadMessages[m.sender._id] += 1 : null;
+  });
+  return unreadMessages;
 });
 
 //custom method to generate authToken
@@ -48,15 +59,20 @@ ChatSchema.statics.createNewChat = async function(userId, companionId) {
     console.log(err);
     throw new Error('Chat already exists.');
   }
-  console.log(chat);
   return chat;
 };
 
-ChatSchema.statics.getChatById = async function(chatId) {
+ChatSchema.statics.getChatById = async function(chatId, currentUserId) {
   return this.findByIdAndUpdate(
-      chatId,
-    { unreadCount : 0 },
-    {new: true})
+    chatId,
+    {
+      $set: { 'messages.$[sender].read': true }
+    },
+    {
+      arrayFilters: [ { 'sender._id': !currentUserId } ],
+      new: true,
+    }
+  )
   .catch(err => {
     console.error(err);
     throw err;
@@ -68,7 +84,7 @@ ChatSchema.statics.postChatMessage = async function(chatId, message) {
     chatId,
     {
       $push: { messages: message },
-      $inc: { unreadCount : 1 }
+      // $inc: { unreadCount : 1 }
     },
     {new: true}
   )
