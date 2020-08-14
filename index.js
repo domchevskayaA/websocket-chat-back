@@ -43,10 +43,6 @@ const server = app.listen(process.env.PORT, () => {
 const io = require('socket.io')(server);
 
 io.on('connection', socket => {
-  // console.log(socket.id, 'connection')
-});
-
-io.on('connection', socket => {
   socket.on('SEND_MESSAGE',data => {
     io.emit('MESSAGE', data)
   });

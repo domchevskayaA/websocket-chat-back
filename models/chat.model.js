@@ -36,7 +36,6 @@ const getPopulateUsersObject = (userId) => {
   return {
     path: 'users',
     select: 'name avatar email',
-    // match: { _id: {$ne: userId }},
   };
 };
 
@@ -84,7 +83,6 @@ ChatSchema.statics.postChatMessage = async function(chatId, message) {
     chatId,
     {
       $push: { messages: message },
-      // $inc: { unreadCount : 1 }
     },
     {new: true}
   )
