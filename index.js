@@ -2,6 +2,9 @@ require('dotenv').config();
 const mongoose = require("mongoose");
 mongoose.set('useCreateIndex', true);
 
+const errorHandlingMiddleware = require("./middleware/errorHandling");
+const ServerError = require("./modules/error");
+
 const authRoute = require("./routes/auth.route");
 const usersRoute = require("./routes/users.route");
 const chatsRoute = require("./routes/chats.route");
@@ -35,6 +38,13 @@ app.use(cookieParser());
 app.use("/api/users", usersRoute);
 app.use("/api/chats", chatsRoute);
 app.use("/api/auth", authRoute);
+
+app.all('*', (req, res, next) => {
+  const err = new ServerError(404, `Can't find ${req.originalUrl} on this server!`);
+  next(err);
+});
+
+app.use(errorHandlingMiddleware);
 
 const server = app.listen(process.env.PORT, () => {
   console.log(`server running on port ${process.env.PORT}`);

@@ -1,8 +1,8 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
 mongoose.set('useFindAndModify', false);
-const { User } = require("../models/user.model");
 const { MessageSchema } = require("../models/message.model");
+const ServerError = require("../modules/error");
 
 //simple schema
 const ChatSchema = new mongoose.Schema({
@@ -56,7 +56,7 @@ ChatSchema.statics.createNewChat = async function(userId, companionId) {
     await chat.save();
   } else {
     console.log(err);
-    throw new Error('Chat already exists.');
+    throw new ServerError(401, 'Chat already exists.');
   }
   return chat;
 };

@@ -3,6 +3,7 @@ const { User } = require("../models/user.model");
 const { Message } = require("../models/message.model");
 const { getUserFromRequest, getTokenFromRequest } = require('../modules/jwt');
 const express = require("express");
+const ServerError = require("../modules/error");
 
 const router = express.Router();
 
@@ -25,12 +26,12 @@ router.post("/", async (req, res) => {
     const chat = await Chat.createNewChat(currentUser._id, companionId);
     res.status(200).send(chat);
   } catch(err) {
-    res.send(err);
+    next(err);
   }
 });
 
 // add new chat message
-router.post("/:id/messages", async (req, res) => {
+router.post("/:id/messages", async (req, res, next) => {
   try {
     const chatId = req.params.id;
     const sender = getUserFromRequest(req);
@@ -44,12 +45,12 @@ router.post("/:id/messages", async (req, res) => {
     const chat = await Chat.postChatMessage(chatId, message);  
     res.status(200).send(chat);
   } catch(err) {
-    res.status(404).send(err.message);
+    next(err);
   }
 });
 
 // returns chat by id
-router.get("/:id", async (req, res) => {
+router.get("/:id", async (req, res, next) => {
   try {
     const chatId = req.params.id;
     const currentUser = getUserFromRequest(req);
@@ -57,7 +58,7 @@ router.get("/:id", async (req, res) => {
     const chat = await Chat.getChatById(chatId, currentUser._id);
     res.status(200).send(chat);
   } catch(err) {
-    res.status(404).send(err.message);
+    next(err);
   }
 });
 
